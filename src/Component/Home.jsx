@@ -12,8 +12,10 @@ export default function Home() {
   const [isRightActive, setIsRightActive] = useState(false)
   const [isLeftActive, setIsLeftActive] = useState(false)
   const [isUsersLoading, setIsUsersLoading] = useState(false)
-  const [isUserLoading, setIsUserLoading] = useState(false)
+  const [isUserLoading, setIsUserLoading] = useState(false);
+  const [perPage, setPerPage] = useState(0);
   const setUsersData = (data) => {
+    setPerPage(data.per_page);
     setUsers(data.data)
     setTotalPages(data.total_pages)
     setPage(data.page)
@@ -27,18 +29,20 @@ export default function Home() {
       setIsUsersLoading(true)
       const { data } = await userServices.getAllUsers(page)
       setIsUsersLoading(false)
+      setPerPage(data.per_page);
       setUsersData(data)
     }
     fetchUserData()
   }, [])
   const handleClick = async (id) => {
     setIsUserLoading(true)
-    const { data } = await userServices.getUserById(id);
+    const {data}= await userServices.getUserById(id);
     setIsUserLoading(false)
     const avatar = data.avatar
     const name = data.first_name + ' ' + data.last_name
-    const email = data.email
-    setCardInfo({ avatar, name, email })
+    const email = data.email;
+    const Id = (data.id);
+    setCardInfo({ avatar, name, email, Id })
   }
 
   const moveLeft = async () => {
@@ -68,6 +72,7 @@ export default function Home() {
               name={cardInfo.name}
               email={cardInfo.email}
               avatar={cardInfo.avatar}
+              Id = {cardInfo.Id}
             />)
           ) : null}
           <div className="btn-container">
@@ -80,7 +85,7 @@ export default function Home() {
                     onClick={() => {
                       handleClick(el.id)
                     }}
-                  >{`${el.first_name} ${el.last_name}`}</Button>
+                  >{`${el.id}. ${el.first_name} ${el.last_name}`}</Button>
                 </div>
               )
             })}
